@@ -1,4 +1,3 @@
-import { Text } from "react-native";
 import {
   Body1,
   Caption,
@@ -11,7 +10,7 @@ import { HomeTabStackReactNavigationProps } from "navigation/HomeTabStackNavigat
 import { ErrorUI } from "components/molecules";
 import { useTransactionsBottomSheetStore } from "services/zustand";
 import { useLayoutAnimationOnChange } from "utils";
-import { Carousel as CardCarousel } from "components/molecules/Carousel";
+import { CardCarousel } from "components/molecules/Carousel";
 import { LoadingPlaceholder } from "./LoadingPlaceholder";
 import { TransactionsBottomSheet } from "./TransactionsBottomSheet";
 import { MakePaymentButton } from "./MakePaymentButton";
@@ -89,6 +88,8 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
     },
   ];
 
+  const onCardViewed = (viewableCard) => {};
+
   return (
     <>
       <ScreenContainer>
@@ -117,7 +118,7 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
                 fontWeight={"300"}
               >{`Credit limit: ${creditLimit}`}</Body1>
               <Spacer size={"$6"} />
-              <CardCarousel cards={cards} />
+              <CardCarousel cards={cards} onCardViewed={onCardViewed} />
               <Spacer size={"$6"} />
               <MakePaymentButton hasExistingPaymentMethods={hasExistingPaymentMethods} />
               <Spacer size={"$6"} />

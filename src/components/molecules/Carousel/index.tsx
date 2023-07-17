@@ -19,16 +19,17 @@ const viewabilityConfig = {
   itemVisiblePercentThreshold: 70,
 };
 
-const Carousel = ({ cards }) => {
+const CardCarousel = ({ cards, onCardViewed }) => {
   const carouselRef = useRef(null);
 
   const [viewable, setViewable] = useState(0);
 
   const onViewableItemsChanged = ({ changed }) => {
-    const viewable = changed.filter((item) => item.isViewable)[0]?.index;
+    const viewableCard = changed.filter((item) => item.isViewable)[0];
+    const viewableCardIndex = viewableCard.index;
 
-    console.log(viewable);
-    setViewable(viewable);
+    onCardViewed(viewableCard);
+    setViewable(viewableCardIndex);
   };
 
   const viewabilityConfigCallbackPairs = useRef([
@@ -129,4 +130,4 @@ const carouselStyles = StyleSheet.create({
   },
 });
 
-export { Carousel };
+export { CardCarousel };

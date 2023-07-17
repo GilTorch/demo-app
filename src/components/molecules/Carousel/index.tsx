@@ -22,14 +22,15 @@ const viewabilityConfig = {
 const CardCarousel = ({ cards, onCardViewed }) => {
   const carouselRef = useRef(null);
 
-  const [viewable, setViewable] = useState(0);
+  const [viewableCardIndex, setViewableCardIndex] = useState(0);
 
   const onViewableItemsChanged = ({ changed }) => {
     const viewableCard = changed.filter((item) => item.isViewable)[0];
-    const viewableCardIndex = viewableCard.index;
+
+    console.log("Vieable Card:", viewableCard);
 
     onCardViewed(viewableCard);
-    setViewable(viewableCardIndex);
+    setViewableCardIndex(viewableCard?.index || viewableCardIndex);
   };
 
   const viewabilityConfigCallbackPairs = useRef([
@@ -95,7 +96,7 @@ const CardCarousel = ({ cards, onCardViewed }) => {
               {
                 ...carouselStyles.circle,
               },
-              viewable === idx ? carouselStyles.selectedCircle : {},
+              viewableCardIndex === idx ? carouselStyles.selectedCircle : {},
             ]}
           />
         ))}

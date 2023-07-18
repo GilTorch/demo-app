@@ -22,16 +22,17 @@ const NewCardScreen = ({ navigation }: NewCardScreen) => {
     },
   });
 
+  console.log(errors);
+
   const onSubmit = (data: {
     cardHoldername: string;
     monthlyLimit: string;
     autoCancellation: boolean;
   }) => {
     setIsSubmitting(true);
-
     setTimeout(() => {
       setIsSubmitting(false);
-      navigation.navigate("HomeScreen", data);
+      navigation.navigate("HomeScreen", { newCard: data });
     }, 3000);
   };
 
@@ -80,7 +81,7 @@ const NewCardScreen = ({ navigation }: NewCardScreen) => {
                     placeholder={"$ 0.00"}
                     keyboardType={"decimal-pad"}
                     placeholderTextColor={"rgba(255,255,255,0.5)"}
-                    onChangeText={(text) => onChange(parseFloat(text))}
+                    onChangeText={(text) => onChange(text)}
                     onBlur={onBlur}
                     value={value}
                   />
@@ -99,9 +100,6 @@ const NewCardScreen = ({ navigation }: NewCardScreen) => {
                 </Text>
                 <Controller
                   control={control}
-                  rules={{
-                    required: true,
-                  }}
                   render={({ field: { onChange, value } }) => (
                     <Switch
                       trackColor={{ false: "#767577", true: "rgba(0,255,0,0.5)" }}

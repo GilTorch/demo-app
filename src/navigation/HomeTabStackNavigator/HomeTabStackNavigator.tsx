@@ -1,6 +1,7 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Icon, Header3, Touchable } from "components/atoms";
-import { HomeScreen, TransactionDetailScreen } from "screens";
+import { FontAwesome5 } from "@expo/vector-icons";
+import { HomeScreen, TransactionDetailScreen, NewCardScreen } from "screens";
 import { useProfileDrawerStore } from "services/zustand";
 import { getColorValue } from "theme/utils";
 import { HomeTabStackNavigatorParamList } from "./types";
@@ -33,6 +34,18 @@ const HomeTabStackNavigator = () => {
             </Touchable>
           ),
         }}
+      />
+      <Stack.Screen
+        name={"NewCardScreen"}
+        component={NewCardScreen}
+        options={({ navigation }) => ({
+          headerTitle: "NEW VIRTUAL CARD",
+          headerLeft: () => (
+            <Touchable onPress={() => navigation.goBack()}>
+              <FontAwesome5 name={"caret-left"} size={24} color={"white"} />
+            </Touchable>
+          ),
+        })}
       />
       <Stack.Screen
         name={"TransactionDetailScreen"}

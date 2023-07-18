@@ -109,7 +109,7 @@ const HomeScreen = ({ navigation, route }: HomeScreenProps) => {
     if (newCardData) {
       const fakeCardData = {
         ...cardsData[0],
-        index: cardsToDisplayCopy.length - 1,
+        index: cardsToDisplayCopy.length,
         handleFlipCard,
         balance: 4000,
         creditLimit: newCardData?.monthlyLimit,
@@ -117,7 +117,7 @@ const HomeScreen = ({ navigation, route }: HomeScreenProps) => {
 
       cardsToDisplayCopy.push(fakeCardData);
       cardsToDisplayCopy.push({
-        index: cardsToDisplayCopy.length - 1,
+        index: cardsToDisplayCopy.length,
         isNewCard: true,
       });
       setCardsToDisplay(cardsToDisplayCopy);
@@ -141,7 +141,7 @@ const HomeScreen = ({ navigation, route }: HomeScreenProps) => {
   const currencyCleanup = (value: any) =>
     isNaN(value) ? "$0.00" : formatCurrency(value);
 
-  console.log("Cards To Display", JSON.stringify(cardsToDisplay));
+  // console.log("Cards To Display", JSON.stringify(cardsToDisplay));
 
   return (
     <>

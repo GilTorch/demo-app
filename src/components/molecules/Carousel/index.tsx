@@ -24,7 +24,7 @@ const viewabilityConfig = {
 const CardCarousel = ({ cards, onCardViewed, navigation }) => {
   const carouselRef = useRef(null);
 
-  const [viewableCardIndex, setViewableCardIndex] = useState(0);
+  const [viewableCardIndex, setViewableCardIndex] = useState<number | undefined>(null);
 
   const onViewableItemsChanged = ({ changed }) => {
     const viewableCard = changed.filter((item) => item.isViewable)[0];
@@ -32,7 +32,7 @@ const CardCarousel = ({ cards, onCardViewed, navigation }) => {
     console.log("Vieable Card:", viewableCard);
 
     onCardViewed(viewableCard);
-    setViewableCardIndex(viewableCard?.index || viewableCardIndex);
+    setViewableCardIndex(viewableCard?.index);
   };
 
   const viewabilityConfigCallbackPairs = useRef([
@@ -102,7 +102,7 @@ const CardCarousel = ({ cards, onCardViewed, navigation }) => {
         showsHorizontalScrollIndicator={false}
         snapToAlignment={"start"}
         decelerationRate={"fast"}
-        snapToInterval={CARD_IMAGE_WIDTH - 7}
+        snapToInterval={CARD_IMAGE_WIDTH}
         data={cards}
         keyExtractor={({ index }) => index}
         renderItem={renderCard}

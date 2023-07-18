@@ -31,7 +31,13 @@ type HomeTabStackNavigatorParamList = {
       | undefined;
   };
   HomeScreen: undefined;
-  NewCardScreen: undefined;
+  NewCardScreen: {
+    newCard: {
+      cardHoldername: string;
+      monthlyLimit: string;
+      autoCancellation: boolean;
+    };
+  };
   TransactionDetailScreen: {
     transactionId: number;
   };

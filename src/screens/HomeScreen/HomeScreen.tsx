@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Body1,
   Caption,
@@ -20,7 +20,57 @@ import { GlassVideo } from "./GlassVideo";
 
 type HomeScreenProps = HomeTabStackReactNavigationProps<"HomeScreen">;
 
-const HomeScreen = ({ navigation }: HomeScreenProps) => {
+interface CardArt {
+  __typename?: string;
+  backImageUrl: string;
+  frontImageUrl: string;
+}
+interface DisplayedCard {
+  index: number;
+  cardArt?: CardArt;
+  isFrontOfCardVisible?: boolean;
+  frontImageUrl?: string;
+  backImageUrl?: string;
+  formatedCardNumber?: string;
+  cvv?: string;
+  handleFlipCard?: () => {};
+  expirationDate?: string;
+  isCardLoading?: boolean;
+  cardArtPresent?: boolean;
+  loading?: boolean;
+  balance?: string;
+  creditLimit?: string;
+  isNewCard?: boolean;
+}
+
+const cardsData = [
+  {
+    index: 0,
+    cardArt: {
+      __typename: "CardArt",
+      backImageUrl:
+        "https://assets.development.hypercard.com/card-art/hypercard_primary_back.png",
+      frontImageUrl:
+        "https://assets.development.hypercard.com/card-art/hypercard_primary_front.png",
+    },
+    isFrontOfCardVisible: true,
+    frontImageUrl:
+      "https://assets.development.hypercard.com/card-art/hypercard_primary_front.png",
+    backImageUrl:
+      "https://assets.development.hypercard.com/card-art/hypercard_primary_back.png",
+    isCardLoading: true,
+    cardArtPresent: true,
+    loading: true,
+    balance: "$0.00",
+    creditLimit: "$1,000.00",
+  },
+  {
+    index: 1,
+    isNewCard: true,
+  },
+];
+
+const HomeScreen = ({ navigation, route }: HomeScreenProps) => {
   const {
     isFrontOfCardVisible,
     handleFlipCard,
@@ -38,68 +88,48 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
     cardArt,
   } = useAccountDetailsForHome();
 
+  const [cardsToDisplay, setCardsToDisplay] = useState<DisplayedCard[]>(cardsData);
+  const [currentCardInfo, setCurrentCardInfo] = useState<DisplayedCard | null>(null);
+
+  useEffect(() => {
+    let primaryCardData = cardsData[0];
+
+    primaryCardData = {
+      ...cardsData[0],
+      handleFlipCard,
+    };
+    setCurrentCardInfo(primaryCardData);
+    setCardsToDisplay([{ ...primaryCardData }, { index: 1, isNewCard: true }]);
+  }, [handleFlipCard]);
+
+  useEffect(() => {
+    const newCardData = route.params?.newCard;
+    const cardsToDisplayCopy = cardsToDisplay.filter((card) => !card.isNewCard);
+
+    if (newCardData) {
+      const fakeCardData = {
+        ...cardsData[0],
+        index: cardsToDisplayCopy.length - 1,
+        handleFlipCard,
+        balance: 4000,
+        creditLimit: newCardData?.monthlyLimit,
+      };
+
+      cardsToDisplayCopy.push(fakeCardData);
+      cardsToDisplayCopy.push({
+        index: cardsToDisplayCopy.length - 1,
+        isNewCard: true,
+      });
+      setCardsToDisplay(cardsToDisplayCopy);
+    }
+  }, [route.params?.newCard]);
+
   const setHomeScreenContentY = useTransactionsBottomSheetStore(
     (state) => state.setHomeScreenContentY,
   );
 
   useLayoutAnimationOnChange(loading);
-
-  const cards = [
-    {
-      index: 0,
-      cardArt,
-      isFrontOfCardVisible,
-      frontImageUrl: cardArt?.frontImageUrl,
-      backImageUrl: cardArt?.backImageUrl,
-      formatedCardNumber: maybePrimaryCardData?.formattedCardNumber,
-      cvv: maybePrimaryCardData?.cvv,
-      expirationDate: maybePrimaryCardData?.formattedExpirationDate,
-      isCardLoading: isPrimaryCardDataLoading,
-      cardArtPresent: !!cardArt,
-      loading: isPrimaryCardDataLoading,
-      handleFlipCard,
-      balance: currentBalance,
-      creditLimit,
-    },
-    {
-      index: 1,
-      cardArt,
-      isFrontOfCardVisible,
-      frontImageUrl: cardArt?.frontImageUrl,
-      backImageUrl: cardArt?.backImageUrl,
-      formatedCardNumber: maybePrimaryCardData?.formattedCardNumber,
-      cvv: maybePrimaryCardData?.cvv,
-      expirationDate: maybePrimaryCardData?.formattedExpirationDate,
-      isCardLoading: isPrimaryCardDataLoading,
-      cardArtPresent: !!cardArt,
-      loading: isPrimaryCardDataLoading,
-      handleFlipCard,
-      balance: 1000,
-      creditLimit: 20000,
-    },
-    {
-      index: 2,
-      cardArt,
-      isFrontOfCardVisible,
-      frontImageUrl: cardArt?.frontImageUrl,
-      backImageUrl: cardArt?.backImageUrl,
-      formatedCardNumber: maybePrimaryCardData?.formattedCardNumber,
-      cvv: maybePrimaryCardData?.cvv,
-      expirationDate: maybePrimaryCardData?.formattedExpirationDate,
-      isCardLoading: isPrimaryCardDataLoading,
-      cardArtPresent: !!cardArt,
-      loading: isPrimaryCardDataLoading,
-      handleFlipCard,
-      balance: 4000,
-      creditLimit: 10000,
-    },
-    {
-      index: 3,
-      isNewCard: true,
-    },
-  ];
-
-  const [currentCardInfo, setCurrentCardInfo] = useState(cards[0]);
+  console.log(maybePrimaryCardData);
 
   const onCardViewed = (viewableCard) => {
     if (viewableCard && viewableCard.item) {
@@ -110,6 +140,8 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
 
   const currencyCleanup = (value: any) =>
     isNaN(value) ? "$0.00" : formatCurrency(value);
+
+  console.log("Cards To Display", JSON.stringify(cardsToDisplay));
 
   return (
     <>
@@ -131,16 +163,16 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
               <Caption color={"$white70"}>{"BALANCE"}</Caption>
               <Spacer size={"$2"} />
               <Header1 textAlign={"center"} color={"white"}>
-                {currencyCleanup(currentCardInfo.balance)}
+                {currencyCleanup(currentCardInfo?.balance)}
               </Header1>
               <Spacer size={"$5"} />
               <Body1 color={"$white70"} fontWeight={"300"}>
-                {`Credit limit: ${currencyCleanup(currentCardInfo.creditLimit)}`}
+                {`Credit limit: ${currencyCleanup(currentCardInfo?.creditLimit)}`}
               </Body1>
               <Spacer size={"$6"} />
               <CardCarousel
                 navigation={navigation}
-                cards={cards}
+                cards={cardsToDisplay}
                 onCardViewed={onCardViewed}
               />
               <Spacer size={"$6"} />

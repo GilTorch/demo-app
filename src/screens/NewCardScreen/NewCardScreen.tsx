@@ -22,8 +22,6 @@ const NewCardScreen = ({ navigation }: NewCardScreen) => {
     },
   });
 
-  console.log(errors);
-
   const onSubmit = (data: {
     cardHoldername: string;
     monthlyLimit: string;

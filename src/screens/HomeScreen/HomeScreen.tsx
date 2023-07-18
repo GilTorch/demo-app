@@ -107,12 +107,6 @@ const HomeScreen = ({ navigation, route }: HomeScreenProps) => {
     setCardIsFlipping(true);
     const cardFrontVisible = currentCard.isFrontOfCardVisible;
 
-    console.log(
-      "\n\n\n\n\n\n\n=============FLIP IT=============\n\n\n\n\n\n",
-      cardFrontVisible,
-      cardsToDisplay[index],
-      index,
-    );
     cardsToDisplayCopy[index].isFrontOfCardVisible = !cardFrontVisible;
     setCardsToDisplay(cardsToDisplayCopy);
     setCardIsFlipping(false);
@@ -145,19 +139,15 @@ const HomeScreen = ({ navigation, route }: HomeScreenProps) => {
   );
 
   useLayoutAnimationOnChange(loading);
-  console.log(maybePrimaryCardData);
 
   const onCardViewed = (viewableCard) => {
     if (viewableCard && viewableCard.item) {
       setCurrentCardInfo(viewableCard.item);
-      console.log(`\nItem: ${viewableCard.item}\n`);
     }
   };
 
   const currencyCleanup = (value: any) =>
     isNaN(value) ? "$0.00" : formatCurrency(value);
-
-  // console.log("Cards To Display", JSON.stringify(cardsToDisplay));
 
   return (
     <>

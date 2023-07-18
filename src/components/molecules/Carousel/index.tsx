@@ -43,8 +43,6 @@ const CardCarousel = ({
     { viewabilityConfig, onViewableItemsChanged },
   ]);
 
-  console.log("Cards", cards);
-
   const renderCard = ({ item: card }) => {
     if (card.isNewCard) {
       return (

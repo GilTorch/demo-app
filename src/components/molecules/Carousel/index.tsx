@@ -2,6 +2,7 @@ import { useState, useRef } from "react";
 import { View, StyleSheet, FlatList, Text } from "react-native";
 import { FlipCard, FlipSide } from "components/molecules/FlipCard";
 import { Stack } from "tamagui";
+import { BlurView } from "@react-native-community/blur";
 import { AntDesign } from "@expo/vector-icons";
 import {
   CARD_IMAGE_ASPECT_RATIO,
@@ -43,12 +44,11 @@ const CardCarousel = ({ cards, onCardViewed, navigation }) => {
   const renderCard = ({ item: card }) => {
     if (card.isNewCard) {
       return (
-        <Touchable
-          onPress={() => navigation.navigate("NewCardScreen")}
-          style={carouselStyles.newCard}
-        >
-          <AntDesign name={"pluscircleo"} size={24} color={"white"} />
-          <Text style={carouselStyles.newCardText}>{"NEW VIRTUAL CARD"}</Text>
+        <Touchable onPress={() => navigation.navigate("NewCardScreen")}>
+          <BlurView style={carouselStyles.newCard}>
+            <AntDesign name={"pluscircleo"} size={24} color={"white"} />
+            <Text style={carouselStyles.newCardText}>{"NEW VIRTUAL CARD"}</Text>
+          </BlurView>
         </Touchable>
       );
     }
@@ -149,18 +149,25 @@ const carouselStyles = StyleSheet.create({
     alignItems: "center",
   },
   newCard: {
-    backgroundColor: "black",
-    borderWidth: 1,
+    // backgroundColor: "black",
+    // borderWidth: 1,
     borderColor: "white",
     width: CARD_IMAGE_WIDTH,
     height: CARD_IMAGE_WIDTH / CARD_IMAGE_ASPECT_RATIO,
     borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
+    overflow: "hidden",
   },
   newCardText: {
     color: "white",
     marginTop: 10,
+  },
+  backgroundBlur: {
+    width: CARD_IMAGE_WIDTH,
+    height: CARD_IMAGE_WIDTH / CARD_IMAGE_ASPECT_RATIO,
+    zIndex: 0,
+    position: "relative",
   },
 });
 

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import {} from "expo-blur";
 import { View, TextInput, Text, Switch, StyleSheet, ImageBackground } from "react-native";
 import { Controller, useForm } from "react-hook-form";
 import { ScreenContainer } from "components/atoms";

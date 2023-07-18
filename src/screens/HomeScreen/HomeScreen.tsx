@@ -78,18 +78,12 @@ const HomeScreen = ({ navigation, route }: HomeScreenProps) => {
     loading: isPrimaryCardDataLoading,
   } = useCardVisibility(navigation);
 
-  const {
-    loading,
-    error,
-    currentBalance,
-    creditLimit,
-    refetch,
-    hasExistingPaymentMethods,
-    cardArt,
-  } = useAccountDetailsForHome();
+  const { loading, error, refetch, cardArt, hasExistingPaymentMethods } =
+    useAccountDetailsForHome();
 
   const [cardsToDisplay, setCardsToDisplay] = useState<DisplayedCard[]>(cardsData);
   const [currentCardInfo, setCurrentCardInfo] = useState<DisplayedCard | null>(null);
+  const [cardIsFlipping, setCardIsFlipping] = useState(false);
 
   useEffect(() => {
     let primaryCardData = cardsData[0];
@@ -102,6 +96,28 @@ const HomeScreen = ({ navigation, route }: HomeScreenProps) => {
     setCardsToDisplay([{ ...primaryCardData }, { index: 1, isNewCard: true }]);
   }, [handleFlipCard]);
 
+  const flipCard = (index: number) => {
+    const cardsToDisplayCopy = cardsToDisplay;
+    const currentCard = cardsToDisplayCopy[index];
+
+    if (currentCard.isNewCard) {
+      return;
+    }
+
+    setCardIsFlipping(true);
+    const cardFrontVisible = currentCard.isFrontOfCardVisible;
+
+    console.log(
+      "\n\n\n\n\n\n\n=============FLIP IT=============\n\n\n\n\n\n",
+      cardFrontVisible,
+      cardsToDisplay[index],
+      index,
+    );
+    cardsToDisplayCopy[index].isFrontOfCardVisible = !cardFrontVisible;
+    setCardsToDisplay(cardsToDisplayCopy);
+    setCardIsFlipping(false);
+  };
+
   useEffect(() => {
     const newCardData = route.params?.newCard;
     const cardsToDisplayCopy = cardsToDisplay.filter((card) => !card.isNewCard);
@@ -109,8 +125,8 @@ const HomeScreen = ({ navigation, route }: HomeScreenProps) => {
     if (newCardData) {
       const fakeCardData = {
         ...cardsData[0],
+        isFrontOfCardVisible: true,
         index: cardsToDisplayCopy.length,
-        handleFlipCard,
         balance: 4000,
         creditLimit: newCardData?.monthlyLimit,
       };
@@ -174,6 +190,8 @@ const HomeScreen = ({ navigation, route }: HomeScreenProps) => {
                 navigation={navigation}
                 cards={cardsToDisplay}
                 onCardViewed={onCardViewed}
+                handleFlipCard={flipCard}
+                cardIsFlipping={cardArt}
               />
               <Spacer size={"$6"} />
               <MakePaymentButton hasExistingPaymentMethods={hasExistingPaymentMethods} />

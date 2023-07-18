@@ -21,15 +21,19 @@ const viewabilityConfig = {
   itemVisiblePercentThreshold: 70,
 };
 
-const CardCarousel = ({ cards, onCardViewed, navigation }) => {
+const CardCarousel = ({
+  cards,
+  onCardViewed,
+  navigation,
+  cardIsFlipping,
+  handleFlipCard,
+}) => {
   const carouselRef = useRef(null);
 
   const [viewableCardIndex, setViewableCardIndex] = useState<number | undefined>(null);
 
   const onViewableItemsChanged = ({ changed }) => {
     const viewableCard = changed.filter((item) => item.isViewable)[0];
-
-    console.log("Vieable Card:", viewableCard);
 
     onCardViewed(viewableCard);
     setViewableCardIndex(viewableCard?.index);
@@ -54,7 +58,7 @@ const CardCarousel = ({ cards, onCardViewed, navigation }) => {
     }
 
     return (
-      <Touchable onPress={card?.handleFlipCard} pressStyle={undefined}>
+      <Touchable onPress={() => handleFlipCard(card.index)} pressStyle={undefined}>
         {card.cardArt ? (
           <FlipCard
             style={carouselStyles.carouselFlipCard}
@@ -98,6 +102,7 @@ const CardCarousel = ({ cards, onCardViewed, navigation }) => {
         ref={carouselRef.current}
         viewabilityConfigCallbackPairs={viewabilityConfigCallbackPairs.current}
         horizontal={true}
+        extraData={cardIsFlipping}
         scrollEnabled={cards.length > 1}
         showsHorizontalScrollIndicator={false}
         snapToAlignment={"start"}

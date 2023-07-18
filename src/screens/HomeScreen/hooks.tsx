@@ -87,6 +87,8 @@ const useCardVisibility = (
   }, [isFocused, isFrontOfCardVisible, toggleIsFrontOfCardVisible]);
 
   const handleFlipCard = useCallback(async () => {
+    console.log("Handle that flip!");
+
     if (isFrontOfCardVisible) {
       toggleIsFrontOfCardVisible();
     } else {

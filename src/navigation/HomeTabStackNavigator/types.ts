@@ -31,6 +31,7 @@ type HomeTabStackNavigatorParamList = {
       | undefined;
   };
   HomeScreen: undefined;
+  NewCardScreen: undefined;
   TransactionDetailScreen: {
     transactionId: number;
   };

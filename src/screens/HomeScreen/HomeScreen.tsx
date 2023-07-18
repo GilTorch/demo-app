@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Body1,
   Caption,
@@ -9,7 +10,7 @@ import { Spacer, Stack } from "tamagui";
 import { HomeTabStackReactNavigationProps } from "navigation/HomeTabStackNavigator/types";
 import { ErrorUI } from "components/molecules";
 import { useTransactionsBottomSheetStore } from "services/zustand";
-import { useLayoutAnimationOnChange } from "utils";
+import { useLayoutAnimationOnChange, formatCurrency } from "utils";
 import { CardCarousel } from "components/molecules/Carousel";
 import { LoadingPlaceholder } from "./LoadingPlaceholder";
 import { TransactionsBottomSheet } from "./TransactionsBottomSheet";
@@ -45,6 +46,22 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
 
   const cards = [
     {
+      index: 0,
+      cardArt,
+      isFrontOfCardVisible,
+      frontImageUrl: cardArt?.frontImageUrl,
+      backImageUrl: cardArt?.backImageUrl,
+      formatedCardNumber: maybePrimaryCardData?.formattedCardNumber,
+      cvv: maybePrimaryCardData?.cvv,
+      expirationDate: maybePrimaryCardData?.formattedExpirationDate,
+      isCardLoading: isPrimaryCardDataLoading,
+      cardArtPresent: !!cardArt,
+      loading: isPrimaryCardDataLoading,
+      handleFlipCard,
+      balance: currentBalance,
+      creditLimit,
+    },
+    {
       index: 1,
       cardArt,
       isFrontOfCardVisible,
@@ -57,6 +74,8 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
       cardArtPresent: !!cardArt,
       loading: isPrimaryCardDataLoading,
       handleFlipCard,
+      balance: 1000,
+      creditLimit: 20000,
     },
     {
       index: 2,
@@ -71,24 +90,26 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
       cardArtPresent: !!cardArt,
       loading: isPrimaryCardDataLoading,
       handleFlipCard,
+      balance: 4000,
+      creditLimit: 10000,
     },
     {
       index: 3,
-      cardArt,
-      isFrontOfCardVisible,
-      frontImageUrl: cardArt?.frontImageUrl,
-      backImageUrl: cardArt?.backImageUrl,
-      formatedCardNumber: maybePrimaryCardData?.formattedCardNumber,
-      cvv: maybePrimaryCardData?.cvv,
-      expirationDate: maybePrimaryCardData?.formattedExpirationDate,
-      isCardLoading: isPrimaryCardDataLoading,
-      cardArtPresent: !!cardArt,
-      loading: isPrimaryCardDataLoading,
-      handleFlipCard,
+      isNewCard: true,
     },
   ];
 
-  const onCardViewed = (viewableCard) => {};
+  const [currentCardInfo, setCurrentCardInfo] = useState(cards[0]);
+
+  const onCardViewed = (viewableCard) => {
+    if (viewableCard && viewableCard.item) {
+      setCurrentCardInfo(viewableCard.item);
+      console.log(`\nItem: ${viewableCard.item}\n`);
+    }
+  };
+
+  const currencyCleanup = (value: any) =>
+    isNaN(value) ? "$0.00" : formatCurrency(value);
 
   return (
     <>
@@ -110,15 +131,18 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
               <Caption color={"$white70"}>{"BALANCE"}</Caption>
               <Spacer size={"$2"} />
               <Header1 textAlign={"center"} color={"white"}>
-                {currentBalance}
+                {currencyCleanup(currentCardInfo.balance)}
               </Header1>
               <Spacer size={"$5"} />
-              <Body1
-                color={"$white70"}
-                fontWeight={"300"}
-              >{`Credit limit: ${creditLimit}`}</Body1>
+              <Body1 color={"$white70"} fontWeight={"300"}>
+                {`Credit limit: ${currencyCleanup(currentCardInfo.creditLimit)}`}
+              </Body1>
               <Spacer size={"$6"} />
-              <CardCarousel cards={cards} onCardViewed={onCardViewed} />
+              <CardCarousel
+                navigation={navigation}
+                cards={cards}
+                onCardViewed={onCardViewed}
+              />
               <Spacer size={"$6"} />
               <MakePaymentButton hasExistingPaymentMethods={hasExistingPaymentMethods} />
               <Spacer size={"$6"} />
